@@ -1,243 +1,16 @@
-<style>
+<!doctype html>
+<html>
+<head>
 
-    body {
-        font-family: sans-serif;
-        background-color: #fed;
-    }
+    <link href="main.css" rel="stylesheet">
 
-    label {
-        display: inline-block;
-        padding: 0.125em;
-    }
+    <script src="../populate_data.js"></script>
 
-    fieldset {
-        display: inline-block;
-    }
+    <script src="lookup_dialog.js"></script>
+    <script src="main.js"></script>
 
-    legend {
-        font-weight: bold;
-    }
-
-    form div h1 {
-        margin: 1em 0 0 0;
-        padding: 0;
-
-    }
-
-    form div h1,
-    fieldset,
-    fieldset label {
-        font-size: 0.9em;
-    }
-
-    fieldset label input[type='text'],
-    fieldset label select {
-        font-size: 1.2em;
-    }
-
-
-</style>
-
-
-<script>
-
-    if (!Array.isArray) {
-        Array.isArray = function (arg) {
-            return Object.prototype.toString.call(arg) === '[object Array]';
-        };
-    }
-
-    (function () {
-
-
-        window.source_data_example = {
-            "id": "123",
-            "username": "user1",
-
-            "fname": "John",
-            "mname": "E",
-            "lname": "Doe",
-
-            "email": "jdoe@example.com",
-
-            "organization": "XYZ CORP",
-
-            "street": "111 Pine Ct",
-            "streetb": "Apt 1",
-            "city": "Columbia City",
-            "state": "OR",
-            "zip": "97018",
-
-            "street2": "123 Main ST East",
-            "streetb2": "Upstairs at Erics",
-            "city2": "Portland",
-            "state2": "OR",
-            "zip2": "12345",
-
-            "phone": "555-888-8888",
-            "fax": "555-000-1212",
-            "phonew1": "555-111-1212",
-            "phonew2": "555-222-1212",
-            "phonecell": "555-333-1212",
-            "phone_number": "555-999-1212"
-        };
-
-
-        function applyData(fieldParent, data, data_field_map) {
-
-            function applyField(field) {
-
-                const INPUT = 'INPUT';
-                const TEXTAREA = 'TEXTAREA';
-                const SELECT = 'SELECT';
-
-                //Try looking for name
-                var element = fieldParent.querySelector("[name='" + field.target_field + "']");
-
-                //Try looking for id
-                if (element === undefined) {
-                    console.log("Unknown element name. Trying id...", field)
-                    element = fieldParent.querySelector("#" + field.target_field);
-                }
-
-                //handle not found name nor id
-                if (element === undefined) {
-                    console.log("Unknown element name or id.", field)
-                    return false;
-                }
-
-                var value = "";
-
-                if (!Array.isArray(field.source_field)) {
-                    //SIMPLE VALUE
-                    value = data[field.source_field];
-                } else {
-                    debugger;
-                    //COMPOUND VALUE
-                    var output = [];
-                    field.source_field.forEach(function (sourcePart) {
-                        output.push(data[sourcePart]);
-                    });
-                    value = output.join(' ');
-                }
-
-                if (element.tagName === undefined) {
-                    return false;
-                }
-
-                if (
-                    element.tagName === INPUT
-                    ||
-                    element.tagName === SELECT
-                ) {
-                    element.value = value;
-                } else if (element.tagName === TEXTAREA) {
-                    element.innerText = value;
-                } else {
-                    console.log("Unknown field element type.", field)
-                }
-
-            }
-
-            data_field_map.forEach(applyField);
-
-        }
-
-        function lookUpCallBack(item) {
-            applyData(window.form_element, item, window.data_field_map);
-        }
-
-
-        function appendLookupButton(clickHandler, targetSelector) {
-            var button = document.createElement('button');
-            button.innerText = 'Lookup...';
-
-            button.style.position = 'absolute';
-            button.style.right = '0';
-            button.style.top = '0';
-
-            button.addEventListener('click', clickHandler);
-
-
-            var target = document.querySelector(targetSelector);
-            target.style.position = 'relative';
-            target.appendChild(button)
-        }
-
-        function showLookupDialog(){
-            alert('Imagine a contact picker here that calls the callback passing an object with key value pairs.');
-            lookUpCallBack(window.source_data_example);
-        }
-
-        function setupContactOne() {
-
-            function onClickOne(e) {
-                e.preventDefault();
-
-                window.data_field_map = [
-                    {"target_field": 'guardian_name', "source_field": ["fname", "mname", "lname"]},
-                    {"target_field": 'guardian_address', "source_field": "street"},
-
-                    {"target_field": 'guardian_city', "source_field": "city"},
-                    {"target_field": 'guardian_state', "source_field": "state"},
-
-                    {"target_field": 'guardian_zip', "source_field": "zip"},
-
-                    {"target_field": 'guardian_home_no', "source_field": "phone"},
-                    {"target_field": 'guardian_cell_no', "source_field": "phonecell"},
-                    {"target_field": 'guardian_work_no', "source_field": "phonew1"},
-                    {"target_field": 'guardian_other_no', "source_field": "phonew2"},
-
-                    {"target_field": 'guardian_email', "source_field": "email"}
-                ];
-                window.form_element = document.querySelector("#guardian_one");
-                showLookupDialog();
-            }
-
-            appendLookupButton(onClickOne, "#guardian_one");
-        }
-
-
-        function setupContactTwo() {
-
-            function onClickTwo(e) {
-                e.preventDefault();
-
-                window.data_field_map = [
-                    {"target_field": 'guardian_name2', "source_field": ["fname", "mname", "lname"]},
-                    {"target_field": 'guardian_address2', "source_field": "street"},
-
-                    {"target_field": 'guardian_city2', "source_field": "city"},
-                    {"target_field": 'guardian_state2', "source_field": "state"},
-
-                    {"target_field": 'guardian_zip2', "source_field": "zip"},
-
-                    {"target_field": 'guardian_home_no2', "source_field": "phone"},
-                    {"target_field": 'guardian_cell_no2', "source_field": "phonecell"},
-                    {"target_field": 'guardian_work_no2', "source_field": "phonew1"},
-                    {"target_field": 'guardian_other_no2', "source_field": "phonew2"},
-
-                    {"target_field": 'guardian_email2', "source_field": "email"}
-                ];
-                window.form_element = document.querySelector("#guardian_two");
-                showLookupDialog();
-            }
-
-            appendLookupButton(onClickTwo, "#guardian_two");
-        }
-
-
-        function init() {
-            setupContactOne();
-            setupContactTwo();
-        }
-
-        document.addEventListener('DOMContentLoaded', init);
-
-
-    }());
-</script>
-
+</head>
+<body>
 
 <form id="example_form">
 
@@ -533,5 +306,9 @@
         </fieldset>
 
     </div>
-    <input id="save" type="submit" value="Save">
+
 </form>
+
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+body {
+    font-family: sans-serif;
+    background-color: #fed;
+}
+
+label {
+    display: inline-block;
+    padding: 0.125em;
+}
+
+fieldset {
+    display: inline-block;
+}
+
+legend {
+    font-weight: bold;
+}
+
+form div h1 {
+    margin: 1em 0 0 0;
+    padding: 0;
+
+}
+
+form div h1,
+fieldset,
+fieldset label {
+    font-size: 0.9em;
+}
+
+fieldset label input[type='text'],
+fieldset label select {
+    font-size: 1.2em;
+}
+
+button{
+    background-color: lightcyan;
+    color: darkblue;
+    user-select: none;
+    font-size: 1.25em;
+    margin: 0;
+    padding: 1em;
+    box-shadow: 1px 1px 3px black;
+    border-radius: 18px;
+}
